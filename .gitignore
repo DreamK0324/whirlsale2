@@ -43,3 +43,5 @@ coverage
 *.swp  # Ignore temporary vim files
 
 .medusa/
+**/.medusa/
+
