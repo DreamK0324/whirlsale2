@@ -45,3 +45,8 @@ coverage
 .medusa/
 **/.medusa/
 
+dump.rdb
+*.rdb
+
+
+
