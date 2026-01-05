@@ -19,6 +19,28 @@ module.exports = defineConfig({
 
   modules: [
 
+    // Files -> S3 (Cloudflare R2)
+    {
+      resolve: "@medusajs/file",
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/file-s3",
+            id: "s3",
+            is_default: true,
+            options: {
+              file_url: process.env.S3_FILE_URL, // https://pub-xxx.r2.dev
+              access_key_id: process.env.S3_ACCESS_KEY_ID,
+              secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
+              region: process.env.S3_REGION || "auto",
+              bucket: process.env.S3_BUCKET,
+              endpoint: process.env.S3_ENDPOINT, // https://<accountid>.r2.cloudflarestorage.com
+            },
+          },
+        ],
+      },
+    },
+
     // Event Bus -> Redis（替代 Local Event Bus）
     {
       resolve: "@medusajs/medusa/event-bus-redis",

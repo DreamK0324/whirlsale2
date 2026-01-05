@@ -48,5 +48,6 @@ coverage
 dump.rdb
 *.rdb
 
+whirlsale/static/
 
 
