@@ -35,7 +35,15 @@ export default async function handler({
 }: SubscriberArgs<{ id: string }>) {
   console.log("[revalidate] event:", event.name, "id:", event.data?.id)
 
-  await callRevalidate(["/fr/store", "/es/store", "/dk/store"])
+  await callRevalidate([
+        "/dk/store",
+        "/fr/store",
+        "/de/store",
+        "/it/store",
+        "/es/store",
+        "/se/store",
+        "/gb/store",
+    ])
 }
 
 export const config: SubscriberConfig = {
