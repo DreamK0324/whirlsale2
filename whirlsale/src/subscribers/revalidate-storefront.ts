@@ -1,6 +1,11 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 
-async function callRevalidate(paths: string[]) {
+type RevalidatePayload = {
+  paths?: string[]
+  tags?: string[]
+}
+
+async function callRevalidate(payload: RevalidatePayload) {
   const url = process.env.STOREFRONT_REVALIDATE_URL
   const secret = process.env.STOREFRONT_REVALIDATE_SECRET
 
@@ -9,6 +14,9 @@ async function callRevalidate(paths: string[]) {
     return
   }
 
+  const paths = payload.paths ?? []
+  const tags = payload.tags ?? []
+
   try {
     const res = await fetch(url, {
       method: "POST",
@@ -16,14 +24,14 @@ async function callRevalidate(paths: string[]) {
         "content-type": "application/json",
         "x-revalidate-secret": secret,
       },
-      body: JSON.stringify({ paths }),
+      body: JSON.stringify({ paths, tags }),
     })
 
+    const text = await res.text().catch(() => "")
     if (!res.ok) {
-      const text = await res.text().catch(() => "")
       console.warn("[revalidate] failed", res.status, text)
     } else {
-      console.log("[revalidate] ok", paths.join(", "))
+      console.log("[revalidate] ok", { paths, tags })
     }
   } catch (e) {
     console.warn("[revalidate] error", e)
@@ -35,15 +43,7 @@ export default async function handler({
 }: SubscriberArgs<{ id: string }>) {
   console.log("[revalidate] event:", event.name, "id:", event.data?.id)
 
-  await callRevalidate([
-        "/dk/store",
-        "/fr/store",
-        "/de/store",
-        "/it/store",
-        "/es/store",
-        "/se/store",
-        "/gb/store",
-    ])
+  await callRevalidate({ tags: ["products"] })
 }
 
 export const config: SubscriberConfig = {
