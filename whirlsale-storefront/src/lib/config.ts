@@ -78,28 +78,5 @@ sdk.client.fetch = async <T>(
     }
   }
 
-  let cc: string | null | undefined
-
-  const h: any = (nextInit as any)?.headers
-  if (h?.get) {
-    // Headers 实例
-    cc = h.get("cache-control")
-  } else {
-    // 普通对象（可能有不同大小写）
-    cc = h?.["cache-control"] ?? h?.["Cache-Control"]
-  }
-
-  if (cc) {
-    const u =
-      typeof input === "string"
-        ? input
-        : input instanceof URL
-          ? input.toString()
-          : (input as any)?.url ?? ""
-    console.log("[debug] outgoing cache-control =", cc, "url =", u)
-  }
-
-
-
   return originalFetch(input, nextInit)
 }
