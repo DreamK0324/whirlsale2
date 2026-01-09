@@ -33,6 +33,21 @@ export const getCacheTag = async (tag: string): Promise<string> => {
   }
 }
 
+// export const getCacheOptions = async (
+//   tag: string
+// ): Promise<{ tags: string[] } | {}> => {
+//   if (typeof window !== "undefined") {
+//     return {}
+//   }
+
+//   const cacheTag = await getCacheTag(tag)
+
+//   if (!cacheTag) {
+//     return {}
+//   }
+
+//   return { tags: [`${cacheTag}`] }
+// }
 export const getCacheOptions = async (
   tag: string
 ): Promise<{ tags: string[] } | {}> => {
@@ -40,14 +55,22 @@ export const getCacheOptions = async (
     return {}
   }
 
-  const cacheTag = await getCacheTag(tag)
+  // 公共内容：用全局稳定 tag（让后端 revalidateTag("products") 能命中）
+  const GLOBAL_TAGS = new Set(["products", "categories", "collections"])
 
+  if (GLOBAL_TAGS.has(tag)) {
+    return { tags: [tag] }
+  }
+
+  // 私有内容（cart/customer 等）：继续按 cacheId 隔离
+  const cacheTag = await getCacheTag(tag)
   if (!cacheTag) {
     return {}
   }
 
-  return { tags: [`${cacheTag}`] }
+  return { tags: [cacheTag] }
 }
+
 
 export const setAuthToken = async (token: string) => {
   const cookies = await nextCookies()
